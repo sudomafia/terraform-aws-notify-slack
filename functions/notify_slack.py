@@ -212,7 +212,11 @@ def format_default(
     if type(message) is dict:
         for k, v in message.items():
             value = f"{json.dumps(v)}" if isinstance(v, (dict, list)) else str(v)
-            fields.append({"title": k, "value": f"`{value}`", "short": len(value) < 25})
+            if k == "detail" and len(value) > 200:
+                value = json.dumps(v["overrides"]["containerOverrides"][0])
+                fields.append({"title": "containerOverrides", "value": f"`{value}`", "short": len(value) < 25})
+            else:
+                fields.append({"title": k, "value": f"`{value}`", "short": len(value) < 25})
     else:
         fields.append({"value": message, "short": False})
 
